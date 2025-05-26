@@ -33,11 +33,8 @@
         padding: 30px 40px;
         border-radius: 20px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        width: 100%;
-      }
-      .custom-container {
         width: 98%;
-        margin: auto;
+        max-width: 700px;
       }
 
       h1 {
@@ -204,31 +201,29 @@
   </head>
   <body>
     <div class="app-container">
-      <div class="custom-container">
-        <h1>Guildford Football Pros Pi ⚽</h1>
-        <p class="instructions">Guys Please Enter names separated by commas:</p>
-        <textarea
-          id="namesInput"
-          placeholder="e.g., Nissan, Ranjan, Salin, Bimu, Sudridh, Gaurav, Gula pi"
-        ></textarea
-        ><br /><br />
-        <button onclick="generateTeams()">Generate Teams</button>
+      <h1>Guildford Football Pros Pi ⚽</h1>
+      <p class="instructions">Guys Please Enter names separated by commas:</p>
+      <textarea
+        id="namesInput"
+        placeholder="e.g., Nissan, Ranjan, Salin, Bimu, Sudridh, Gaurav, Gula pi"
+      ></textarea
+      ><br /><br />
+      <button onclick="generateTeams()">Generate Teams</button>
 
-        <div class="teams-display">
-          <div class="team-card" id="teamA">
-            <h3>Team A</h3>
-            <ul></ul>
-          </div>
-          <div class="team-card" id="teamB">
-            <h3>Team B</h3>
-            <ul></ul>
-          </div>
+      <div class="teams-display">
+        <div class="team-card" id="teamA">
+          <h3>Team A</h3>
+          <ul></ul>
         </div>
+        <div class="team-card" id="teamB">
+          <h3>Team B</h3>
+          <ul></ul>
+        </div>
+      </div>
 
-        <div class="extra-players-card hidden" id="extraPlayers">
-          <h3>On The Bench</h3>
-          <div id="benchList"></div>
-        </div>
+      <div class="extra-players-card hidden" id="extraPlayers">
+        <h3>On The Bench</h3>
+        <div id="benchList"></div>
       </div>
     </div>
 
