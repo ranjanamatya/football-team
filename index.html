@@ -202,10 +202,12 @@
   <body>
     <div class="app-container">
       <h1>Guildford Football Pros Pi ⚽</h1>
-      <p class="instructions">Guys Please Enter names separated by commas:</p>
+      <p class="instructions">
+        Guys Please Enter names separated by spaces enter:
+      </p>
       <textarea
         id="namesInput"
-        placeholder="e.g., Nissan, Ranjan, Salin, Bimu, Sudridh, Gaurav, Gula pi"
+        placeholder="e.g., Nissan Ranjan Salin Bimu Sudridh Gaurav GulaPi"
       ></textarea
       ><br /><br />
       <button onclick="generateTeams()">Generate Teams</button>
@@ -239,7 +241,7 @@
       function generateTeams() {
         const input = document.getElementById("namesInput").value;
         let names = input
-          .split(",")
+          .split(/\s+/) // Split by any whitespace, no commas needed
           .map((name) => name.trim())
           .filter((name) => name !== "");
 
