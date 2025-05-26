@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Football Team Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(
+          to bottom right,
+          #004d00,
+          #006400
+        ); /* Dark green gradient */
+        color: #f0f0f0;
+        text-align: center;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .app-container {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 30px 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        width: 90%;
+        max-width: 700px;
+      }
+
+      h1 {
+        font-family: "Anton", sans-serif;
+        font-size: 3.5em;
+        color: #ffd700; /* Gold */
+        text-transform: uppercase;
+        margin-bottom: 30px;
+        text-shadow: 2px 2px 0px #000, 4px 4px 0px rgba(0, 0, 0, 0.3);
+      }
+
+      p.instructions {
+        font-size: 1.1em;
+        margin-bottom: 15px;
+        color: #ccc;
+      }
+
+      textarea {
+        width: calc(100% - 24px);
+        height: 100px;
+        padding: 12px;
+        border-radius: 8px;
+        border: 2px solid #ffd700;
+        background: #f0f0f0;
+        color: #333;
+        font-size: 1em;
+        margin-bottom: 20px;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        resize: vertical;
+      }
+
+      textarea::placeholder {
+        color: #777;
+      }
+
+      button {
+        font-family: "Roboto", sans-serif;
+        font-weight: bold;
+        font-size: 1.2em;
+        padding: 15px 30px;
+        background: #ffd700; /* Gold */
+        color: #1a3a1a; /* Dark Green for text */
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        text-transform: uppercase;
+        transition: background-color 0.3s ease, transform 0.2s ease,
+          box-shadow 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      button:hover {
+        background: #ffc400; /* Lighter Gold */
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+      }
+
+      button:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      }
+
+      .teams-display {
+        margin-top: 30px;
+        display: flex;
+        justify-content: space-around;
+        gap: 20px;
+        flex-wrap: wrap; /* Allow teams to wrap on smaller screens */
+      }
+
+      .team-card,
+      .extra-players-card {
+        background: linear-gradient(145deg, #f9f9f9, #e0e0e0);
+        color: #333;
+        padding: 0; /* Remove padding, header will handle it */
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        width: 280px;
+        overflow: hidden; /* Ensures header radius is clipped correctly */
+        margin-bottom: 20px; /* Space for wrapping */
+        display: flex;
+        flex-direction: column;
+      }
+
+      .team-card h3,
+      .extra-players-card h3 {
+        font-family: "Anton", sans-serif;
+        background: #006400; /* Darker Green */
+        color: #ffd700; /* Gold text */
+        padding: 15px;
+        margin: 0;
+        font-size: 1.8em;
+        text-transform: uppercase;
+        border-bottom: 3px solid #ffd700;
+      }
+
+      .extra-players-card h3 {
+        background: #555; /* Different color for bench */
+        color: #f0f0f0;
+        border-bottom: 3px solid #888;
+      }
+
+      .team-card ul,
+      .extra-players-card div {
+        padding: 20px;
+        flex-grow: 1; /* Allows content to fill space */
+      }
+
+      .team-card ul {
+        list-style: none;
+      }
+
+      .team-card ul li {
+        background: #fff;
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        font-size: 1.1em;
+        font-weight: 500;
+        color: #2c3e50;
+        border-left: 5px solid #00796b; /* Teal accent */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .team-member {
+        animation: fadeIn 0.8s ease-in-out forwards;
+        opacity: 0;
+      }
+
+      .extra-players-card p {
+        font-size: 1.1em;
+        padding: 0px 15px 10px;
+        color: #444;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      /* Hide empty extra players card initially */
+      .extra-players-card:empty {
+        display: none;
+      }
+      .extra-players-card.hidden {
+        display: none;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@^19.1.0",
+          "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+          "react/": "https://esm.sh/react@^19.1.0/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="app-container">
+      <h1>Guildford Football Pros Pi ⚽</h1>
+      <p class="instructions">Guys Please Enter names separated by commas:</p>
+      <textarea
+        id="namesInput"
+        placeholder="e.g., Nissan, Ranjan, Salin, Bimu, Sudridh, Gaurav, Gula pi"
+      ></textarea
+      ><br /><br />
+      <button onclick="generateTeams()">Generate Teams</button>
+
+      <div class="teams-display">
+        <div class="team-card" id="teamA">
+          <h3>Team A</h3>
+          <ul></ul>
+        </div>
+        <div class="team-card" id="teamB">
+          <h3>Team B</h3>
+          <ul></ul>
+        </div>
+      </div>
+
+      <div class="extra-players-card hidden" id="extraPlayers">
+        <h3>On The Bench</h3>
+        <div id="benchList"></div>
+      </div>
+    </div>
+
+    <script>
+      function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+
+      function generateTeams() {
+        const input = document.getElementById("namesInput").value;
+        let names = input
+          .split(",")
+          .map((name) => name.trim())
+          .filter((name) => name !== "");
+
+        if (names.length < 4) {
+          alert("Please enter at least 4 player names to form two teams.");
+          return;
+        }
+
+        names = shuffle(names);
+
+        const teamA_players = names.slice(0, 2);
+        const teamB_players = names.slice(2, 4);
+        const leftover = names.slice(4);
+
+        // Add players to Team A
+        const teamAUl = document.querySelector("#teamA ul");
+        teamAUl.innerHTML = ""; // Clear previous players
+        teamA_players.forEach((name, index) => {
+          const li = document.createElement("li");
+          li.className = "team-member";
+          li.textContent = name;
+          li.style.animationDelay = `${index * 0.1}s`; // Stagger animation
+          teamAUl.appendChild(li);
+        });
+
+        // Add players to Team B
+        const teamBUl = document.querySelector("#teamB ul");
+        teamBUl.innerHTML = ""; // Clear previous players
+        teamB_players.forEach((name, index) => {
+          const li = document.createElement("li");
+          li.className = "team-member";
+          li.textContent = name;
+          li.style.animationDelay = `${index * 0.1}s`; // Stagger animation
+          teamBUl.appendChild(li);
+        });
+
+        const extraDiv = document.getElementById("extraPlayers");
+        const benchListDiv = document.getElementById("benchList");
+        if (leftover.length > 0) {
+          benchListDiv.innerHTML = `<p>${leftover.join(", ")}</p>`;
+          extraDiv.classList.remove("hidden");
+        } else {
+          benchListDiv.innerHTML = "";
+          extraDiv.classList.add("hidden");
+        }
+      }
+    </script>
+  </body>
+</html>
