@@ -1,293 +1,632 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Guildford Football Teams</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      body {
-        font-family: "Roboto", sans-serif;
-        margin: 0;
-        padding: 20px;
-        background: linear-gradient(
-          to bottom right,
-          #004d00,
-          #006400
-        ); /* Dark green gradient */
-        color: #f0f0f0;
-        text-align: center;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PS Football Picker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+:root {
+  --green:#00C853; --green-dim:#00a844;
+  --blue:#4FC3F7; --amber:#FFD740; --red:#FF5252;
+  --bg:#0a0e13; --bg3:#151c26; --card:#111820; --card2:#16202e;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12);
+  --text:#f0f4f8; --text2:#8899aa; --text3:#5a6a7a;
+  --radius:16px; --radius-sm:10px;
+}
+html { font-size:16px; }
+body {
+  font-family:'Inter',sans-serif; background:var(--bg); color:var(--text);
+  min-height:100vh; display:flex; align-items:flex-start; justify-content:center;
+  padding:2rem 1rem 4rem;
+}
+.app { width:100%; max-width:680px; }
 
-      .app-container {
-        background: rgba(0, 0, 0, 0.3);
-        padding: 30px 40px;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        width: 98%;
-        max-width: 700px;
-      }
+/* ── HEADER ── */
+.header { text-align:center; margin-bottom:2.5rem; padding-top:1rem; }
+.badge {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(0,200,83,0.12); border:1px solid rgba(0,200,83,0.3);
+  color:var(--green); font-size:11px; font-weight:700; letter-spacing:.1em;
+  text-transform:uppercase; padding:5px 12px; border-radius:99px; margin-bottom:1.25rem;
+}
+.badge-dot { width:6px; height:6px; border-radius:50%; background:var(--green); animation:bdot 2s infinite; }
+@keyframes bdot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
+h1 {
+  font-family:'Space Grotesk',sans-serif; font-size:clamp(2.2rem,6vw,3.2rem);
+  font-weight:800; line-height:1.1; letter-spacing:-.03em; margin-bottom:.6rem;
+}
+h1 .accent { color:var(--green); }
+.header-sub { font-size:15px; color:var(--text2); }
+.pitch-line { width:100%; height:1px; background:linear-gradient(90deg,transparent,var(--green),transparent); opacity:.35; margin-bottom:2.5rem; }
 
-      h1 {
-        font-family: "Anton", sans-serif;
-        font-size: 3.5em;
-        color: #ffd700; /* Gold */
-        text-transform: uppercase;
-        margin-bottom: 30px;
-        text-shadow: 2px 2px 0px #000, 4px 4px 0px rgba(0, 0, 0, 0.3);
-      }
+/* ── SECTION ── */
+.section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.section-label { font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text3); }
+.sel-pill { font-size:12px; font-weight:600; color:var(--green); background:rgba(0,200,83,0.08); border:1px solid rgba(0,200,83,0.2); padding:3px 10px; border-radius:99px; }
 
-      p.instructions {
-        font-size: 2.1em;
-        margin-bottom: 15px;
-        color: #ccc;
-      }
+/* ── CHIPS ── */
+.chips-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; margin-bottom:2rem; }
+.chip {
+  position:relative; display:flex; flex-direction:column; align-items:center; gap:10px;
+  padding:18px 12px 15px; border-radius:var(--radius); border:1px solid var(--border);
+  background:var(--card); cursor:pointer; transition:border-color .18s,background .18s,transform .12s; overflow:hidden;
+}
+.chip::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(0,200,83,0.05),transparent); opacity:0; transition:opacity .18s; }
+.chip:hover { border-color:var(--border2); transform:translateY(-2px); }
+.chip:hover::before { opacity:1; }
+.chip.on { border-color:rgba(0,200,83,0.45); background:linear-gradient(135deg,#0d1e14,var(--card)); }
+.chip.on::before { opacity:1; }
+.chip-tick {
+  position:absolute; top:10px; right:10px; width:18px; height:18px;
+  border-radius:50%; background:var(--green); display:flex; align-items:center; justify-content:center;
+  font-size:10px; color:#000; font-weight:800; opacity:0; transform:scale(.5); transition:opacity .18s,transform .18s;
+}
+.chip.on .chip-tick { opacity:1; transform:scale(1); }
+.chip-avatar { width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; border:2px solid transparent; transition:border-color .18s; }
+.chip.on .chip-avatar { border-color:rgba(0,200,83,0.4); }
+.chip-name { font-size:14px; font-weight:600; color:var(--text); text-align:center; }
+.chip.on .chip-name { color:#fff; }
+.av0{background:#0d2318;color:#00C853}.av1{background:#0d1a2e;color:#4FC3F7}
+.av2{background:#1e1206;color:#FFD740}.av3{background:#1e0a0d;color:#FF5252}
+.av4{background:#180d24;color:#CE93D8}.av5{background:#0d1f1a;color:#80CBC4}
+.av6{background:#1a1206;color:#FFAB40}
 
-      textarea {
-        width: calc(100% - 24px);
-        height: 100px;
-        padding: 12px;
-        border-radius: 8px;
-        border: 2px solid #ffd700;
-        background: #f0f0f0;
-        color: #333;
-        font-size: 2em;
-        margin-bottom: 20px;
-        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-        resize: vertical;
-      }
+/* ── STATUS ── */
+.status-row { display:flex; align-items:center; gap:10px; margin-bottom:1.25rem; }
+.status-bar-wrap { flex:1; height:4px; background:rgba(255,255,255,0.06); border-radius:99px; overflow:hidden; }
+.status-bar-fill { height:100%; background:var(--green); border-radius:99px; transition:width .3s; }
+.status-text { font-size:13px; font-weight:600; color:var(--text2); white-space:nowrap; min-width:70px; text-align:right; }
+.warn { font-size:13px; color:var(--red); background:rgba(255,82,82,0.08); border:1px solid rgba(255,82,82,0.2); border-radius:var(--radius-sm); padding:10px 14px; margin-bottom:1.25rem; display:none; }
+.warn.show { display:block; }
 
-      textarea::placeholder {
-        color: #777;
-      }
+/* ── BUTTONS ── */
+.btn-row { display:grid; grid-template-columns:1fr auto; gap:10px; margin-bottom:2.5rem; }
+.btn-generate {
+  padding:15px 24px; border-radius:var(--radius); border:none; background:var(--green); color:#000;
+  font-family:'Inter',sans-serif; font-size:15px; font-weight:700; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:8px; transition:background .15s,transform .1s;
+}
+.btn-generate:hover { background:var(--green-dim); transform:translateY(-1px); }
+.btn-generate:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+.btn-clear { padding:15px 18px; border-radius:var(--radius); border:1px solid var(--border2); background:var(--card); color:var(--text2); font-family:'Inter',sans-serif; font-size:14px; font-weight:600; cursor:pointer; transition:background .15s,color .15s; }
+.btn-clear:hover { background:var(--card2); color:var(--text); }
 
-      button {
-        font-family: "Roboto", sans-serif;
-        font-weight: bold;
-        font-size: 2.2em;
-        padding: 15px 30px;
-        background: #ffd700; /* Gold */
-        color: #1a3a1a; /* Dark Green for text */
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        text-transform: uppercase;
-        transition: background-color 0.3s ease, transform 0.2s ease,
-          box-shadow 0.3s ease;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      }
+/* ══════════════════════════════════
+   OVERLAY — full screen takeover
+══════════════════════════════════ */
+.overlay {
+  display:none; position:fixed; inset:0; z-index:9999;
+  background:#06090e;
+  flex-direction:column; align-items:center; justify-content:center;
+}
+.overlay.active { display:flex; }
 
-      button:hover {
-        background: #ffc400; /* Lighter Gold */
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-      }
+/* ── Phase 1: Countdown ── */
+.ph { display:none; width:100%; max-width:500px; padding:0 1.5rem; flex-direction:column; align-items:center; }
+.ph.active { display:flex; }
 
-      button:active {
-        transform: translateY(1px);
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-      }
+.ov-eyebrow { font-size:11px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:var(--text3); margin-bottom:1.5rem; text-align:center; }
 
-      .teams-display {
-        margin-top: 30px;
-        display: block;
-        justify-content: space-around;
-        gap: 20px;
-        flex-wrap: wrap; /* Allow teams to wrap on smaller screens */
-      }
+.big-word {
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(4rem,15vw,8rem); font-weight:800; letter-spacing:-.04em; line-height:1;
+  color:#fff; text-align:center;
+  animation:wpop .3s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes wpop { from{opacity:0;transform:scale(.6) translateY(30px)} to{opacity:1;transform:scale(1) translateY(0)} }
+.big-word.green { color:var(--green); }
+.big-word.amber { color:var(--amber); }
+.big-word.red   { color:var(--red);   }
 
-      .team-card,
-      .extra-players-card {
-        background: linear-gradient(145deg, #f9f9f9, #e0e0e0);
-        color: #333;
-        padding: 0; /* Remove padding, header will handle it */
-        border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-        width: 100%;
-        overflow: hidden; /* Ensures header radius is clipped correctly */
-        margin-bottom: 20px; /* Space for wrapping */
-        display: flex;
-        flex-direction: column;
-      }
+/* ── Phase 2: Slot machine ── */
+.slot-label { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--text3); margin-bottom:1.25rem; text-align:center; }
+.slot-grid { width:100%; display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.slot-col { display:flex; flex-direction:column; gap:8px; }
+.slot-team-hd { font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; text-align:center; padding-bottom:8px; border-bottom:1px solid; margin-bottom:2px; }
+.slot-team-hd.a { color:var(--green); border-color:rgba(0,200,83,0.3); }
+.slot-team-hd.b { color:var(--blue);  border-color:rgba(79,195,247,0.3); }
+.slot-card {
+  height:76px; border-radius:14px; border:1.5px solid;
+  display:flex; align-items:center; justify-content:center;
+  position:relative; overflow:hidden; background:var(--card2);
+}
+.slot-card.a-c { border-color:rgba(0,200,83,0.25); }
+.slot-card.b-c { border-color:rgba(79,195,247,0.25); }
+.slot-inner { font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:800; letter-spacing:-.02em; }
+.slot-card.a-c .slot-inner { color:var(--green); }
+.slot-card.b-c .slot-inner { color:var(--blue); }
+.slot-badge { position:absolute; top:7px; right:9px; font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; opacity:0; transition:opacity .25s; }
+.slot-card.a-c .slot-badge { color:var(--green); }
+.slot-card.b-c .slot-badge { color:var(--blue); }
+.slot-card.locked { animation:lf .35s cubic-bezier(.22,1,.36,1); }
+.slot-card.a-c.locked { border-color:var(--green); background:rgba(0,200,83,0.06); }
+.slot-card.b-c.locked { border-color:var(--blue);  background:rgba(79,195,247,0.06); }
+.slot-card.locked .slot-badge { opacity:1; }
+@keyframes lf { 0%{transform:scale(1.07)} 60%{transform:scale(.97)} 100%{transform:scale(1)} }
 
-      .team-card h3,
-      .extra-players-card h3 {
-        font-family: "Anton", sans-serif;
-        background: #006400; /* Darker Green */
-        color: #ffd700; /* Gold text */
-        padding: 15px;
-        margin: 0;
-        font-size: 2.8em;
-        text-transform: uppercase;
-        border-bottom: 3px solid #ffd700;
-      }
+/* ── Phase 3: Big split reveal ── */
+#phReveal {
+  width:100%; height:100vh;
+  position:relative; overflow:hidden;
+  flex-direction:column; align-items:center; justify-content:center;
+  gap:0;
+}
 
-      .extra-players-card h3 {
-        background: #555; /* Different color for bench */
-        color: #f0f0f0;
-        border-bottom: 3px solid #888;
-      }
+/* Left half green, right half blue */
+.split-left, .split-right {
+  position:absolute; top:0; bottom:0; width:50%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:0; padding:2rem 1.5rem;
+}
+.split-left  { left:0;   background:#051209; border-right:1px solid rgba(0,200,83,0.2); }
+.split-right { right:0;  background:#040d18; }
 
-      .team-card ul,
-      .extra-players-card div {
-        padding: 20px;
-        flex-grow: 1; /* Allows content to fill space */
-      }
+.split-label {
+  font-size:10px; font-weight:700; letter-spacing:.18em; text-transform:uppercase;
+  margin-bottom:1rem; opacity:.6;
+}
+.split-left .split-label  { color:var(--green); }
+.split-right .split-label { color:var(--blue); }
 
-      .team-card ul {
-        list-style: none;
-      }
+.split-name {
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:800; letter-spacing:-.04em; line-height:1;
+  text-align:center; margin-bottom:.5rem;
+  font-size:clamp(1.6rem,5vw,2.4rem);
+}
+.split-left .split-name  { color:var(--green); }
+.split-right .split-name { color:var(--blue); }
 
-      .team-card ul li {
-        background: #fff;
-        padding: 10px 15px;
-        margin-bottom: 10px;
-        border-radius: 6px;
-        font-size: 2.1em;
-        font-weight: 500;
-        color: #2c3e50;
-        border-left: 5px solid #00796b; /* Teal accent */
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      }
+.split-av {
+  width:56px; height:56px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; font-weight:800; margin-bottom:.8rem;
+}
+.split-left .split-av  { background:rgba(0,200,83,0.15); color:var(--green); border:2px solid rgba(0,200,83,0.4); }
+.split-right .split-av { background:rgba(79,195,247,0.15); color:var(--blue); border:2px solid rgba(79,195,247,0.4); }
 
-      .team-member {
-        animation: fadeIn 0.8s ease-in-out forwards;
-        opacity: 0;
-      }
+.split-sep { 
+  width:1px; background:linear-gradient(to bottom, transparent, rgba(255,255,255,0.1), transparent);
+  position:absolute; top:10%; bottom:10%; left:50%; transform:translateX(-50%);
+}
 
-      .extra-players-card p {
-        font-size: 2.1em;
-        padding: 0px 15px 10px;
-        color: #444;
-      }
+.vs-center {
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:48px; height:48px; border-radius:50%;
+  background:#06090e; border:1.5px solid rgba(255,255,255,0.1);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:800;
+  color:var(--text3); z-index:2;
+}
 
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px) scale(0.95);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
-      }
+/* Bench strip at bottom of reveal */
+.reveal-bench {
+  position:absolute; bottom:0; left:0; right:0;
+  background:rgba(6,9,14,0.9);
+  border-top:1px solid var(--border);
+  padding:10px 20px;
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center;
+}
+.reveal-bench-label { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--text3); }
+.reveal-bench-pill { font-size:12px; font-weight:600; color:var(--text2); background:var(--bg3); border:1px solid var(--border); padding:4px 12px; border-radius:99px; }
 
-      /* Hide empty extra players card initially */
-      .extra-players-card:empty {
-        display: none;
-      }
-      .extra-players-card.hidden {
-        display: none;
-      }
-    </style>
-    <script type="importmap">
-      {
-        "imports": {
-          "react": "https://esm.sh/react@^19.1.0",
-          "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
-          "react/": "https://esm.sh/react@^19.1.0/"
-        }
-      }
-    </script>
-  </head>
-  <body>
-    <div class="app-container">
-      <h1>Guildford Football Pros Pi ⚽</h1>
-      <p class="instructions">
-        Guys Please Enter names separated by spaces enter:
-      </p>
-      <textarea
-        id="namesInput"
-        placeholder="e.g., Nissan Ranjan Salin Bimu Sudridh Gaurav GulaPi"
-      ></textarea
-      ><br /><br />
-      <button onclick="generateTeams()">Generate Teams</button>
+/* CTA at top of reveal */
+.reveal-cta-bar {
+  position:absolute; top:0; left:0; right:0;
+  padding:14px 20px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  background:rgba(6,9,14,0.85);
+  backdrop-filter:blur(8px);
+  z-index:3;
+}
+.reveal-tonight {
+  font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text3);
+  display:flex; align-items:center; gap:7px;
+}
+.reveal-tonight-dot { width:6px; height:6px; border-radius:50%; background:var(--green); animation:bdot 2s infinite; }
+.reveal-close-btn {
+  padding:8px 20px; border-radius:99px; border:1px solid var(--border2);
+  background:var(--green); color:#000; font-family:'Inter',sans-serif;
+  font-size:13px; font-weight:700; cursor:pointer; transition:background .15s;
+}
+.reveal-close-btn:hover { background:var(--green-dim); }
 
-      <div class="teams-display">
-        <div class="team-card" id="teamA">
-          <h3>Team A</h3>
-          <ul></ul>
-        </div>
-        <div class="team-card" id="teamB">
-          <h3>Team B</h3>
-          <ul></ul>
-        </div>
+/* Animations for split reveal */
+.slide-in-left  { animation:sil .5s cubic-bezier(.22,1,.36,1) both; }
+.slide-in-right { animation:sir .5s cubic-bezier(.22,1,.36,1) both; }
+@keyframes sil  { from{opacity:0;transform:translateX(-40px)} to{opacity:1;transform:translateX(0)} }
+@keyframes sir  { from{opacity:0;transform:translateX(40px)}  to{opacity:1;transform:translateX(0)} }
+.fade-in-up { animation:fiu .5s cubic-bezier(.22,1,.36,1) both; }
+@keyframes fiu  { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── Confetti ── */
+.confetti-wrap { position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:1; }
+.cf {
+  position:absolute; width:8px; height:8px; border-radius:2px; top:-16px;
+  animation:cfall linear both;
+}
+@keyframes cfall {
+  0%   { transform:translateY(0) rotate(0deg) scale(1); opacity:1; }
+  80%  { opacity:1; }
+  100% { transform:translateY(110vh) rotate(720deg) scale(.6); opacity:0; }
+}
+
+/* ── RESULTS section ── */
+.result-section { display:none; }
+.result-section.show { display:block; }
+.divider { display:flex; align-items:center; gap:12px; margin-bottom:2rem; }
+.divider-line { flex:1; height:1px; background:var(--border); }
+.divider-label { font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text3); }
+.vs-row { display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:stretch; margin-bottom:12px; }
+.vs-badge { display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:800; color:var(--text3); }
+.tcard { border-radius:var(--radius); border:1px solid var(--border); background:var(--card); overflow:hidden; position:relative; }
+.tcard::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+.tcard.a::before { background:var(--green); }
+.tcard.b::before { background:var(--blue); }
+.tcard-head { padding:14px 16px 12px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; }
+.tcard-head-label { font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; letter-spacing:-.02em; }
+.tcard.a .tcard-head-label { color:var(--green); }
+.tcard.b .tcard-head-label { color:var(--blue); }
+.tcard-count { margin-left:auto; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text3); }
+.tcard-body { padding:12px; }
+.prow { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:var(--radius-sm); background:var(--bg3); border:1px solid var(--border); margin-bottom:7px; }
+.prow:last-child { margin-bottom:0; }
+.prow-num { font-size:11px; font-weight:700; color:var(--text3); width:16px; text-align:center; flex-shrink:0; }
+.prow-av { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
+.prow-av.a { background:rgba(0,200,83,.12); color:var(--green); }
+.prow-av.b { background:rgba(79,195,247,.12); color:var(--blue); }
+.prow-name { font-size:14px; font-weight:600; color:var(--text); }
+.bench-res { border-radius:var(--radius); border:1px solid var(--border); background:var(--card); overflow:hidden; margin-bottom:12px; }
+.bench-res-head { padding:13px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--text3); }
+.bench-res-body { padding:12px 16px; display:flex; flex-wrap:wrap; gap:8px; }
+.bench-pill { font-size:13px; font-weight:600; color:var(--text2); background:var(--bg3); border:1px solid var(--border); padding:5px 12px; border-radius:99px; }
+.btn-reshuffle { width:100%; padding:13px; border-radius:var(--radius); border:1px solid var(--border2); background:transparent; color:var(--text2); font-family:'Inter',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px; transition:background .15s,color .15s; }
+.btn-reshuffle:hover { background:var(--card2); color:var(--text); }
+
+@keyframes slideUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+.pop { animation:slideUp .28s cubic-bezier(.22,1,.36,1) forwards; opacity:0; }
+.footer { text-align:center; margin-top:3rem; font-size:12px; color:var(--text3); }
+</style>
+</head>
+<body>
+
+<!-- ══ OVERLAY ══ -->
+<div class="overlay" id="overlay">
+
+  <!-- Phase 1: Countdown -->
+  <div class="ph" id="phCount">
+    <div class="ov-eyebrow">Guildford FC · PS Edition</div>
+    <div class="big-word" id="bigWord">READY?</div>
+  </div>
+
+  <!-- Phase 2: Slot machine -->
+  <div class="ph" id="phSlot">
+    <div class="slot-label">Picking teams…</div>
+    <div class="slot-grid">
+      <div class="slot-col">
+        <div class="slot-team-hd a">Team A</div>
+        <div class="slot-card a-c" id="sA1"><div class="slot-inner" id="sA1t">—</div><span class="slot-badge">✓ locked</span></div>
+        <div class="slot-card a-c" id="sA2"><div class="slot-inner" id="sA2t">—</div><span class="slot-badge">✓ locked</span></div>
       </div>
-
-      <div class="extra-players-card hidden" id="extraPlayers">
-        <h3>On The Bench</h3>
-        <div id="benchList"></div>
+      <div class="slot-col">
+        <div class="slot-team-hd b">Team B</div>
+        <div class="slot-card b-c" id="sB1"><div class="slot-inner" id="sB1t">—</div><span class="slot-badge">✓ locked</span></div>
+        <div class="slot-card b-c" id="sB2"><div class="slot-inner" id="sB2t">—</div><span class="slot-badge">✓ locked</span></div>
       </div>
     </div>
+  </div>
 
-    <script>
-      function shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-      }
+  <!-- Phase 3: Big split-screen reveal -->
+  <div class="ph" id="phReveal">
+    <!-- Confetti canvas -->
+    <div class="confetti-wrap" id="confettiWrap"></div>
 
-      function generateTeams() {
-        const input = document.getElementById("namesInput").value;
-        let names = input
-          .split(/\s+/) // Split by any whitespace, no commas needed
-          .map((name) => name.trim())
-          .filter((name) => name !== "");
+    <!-- Top bar -->
+    <div class="reveal-cta-bar">
+      <div class="reveal-tonight">
+        <div class="reveal-tonight-dot"></div>
+        Tonight's matchup
+      </div>
+      <button class="reveal-close-btn" onclick="closeOverlay()">View teams →</button>
+    </div>
 
-        if (names.length < 4) {
-          alert("Please enter at least 4 player names to form two teams.");
-          return;
-        }
+    <!-- Left: Team A -->
+    <div class="split-left" id="splitLeft">
+      <div class="split-label">Team A</div>
+      <div class="split-av" id="revAvA1"></div>
+      <div class="split-name" id="revNameA1"></div>
+      <div style="height:16px"></div>
+      <div class="split-av" id="revAvA2"></div>
+      <div class="split-name" id="revNameA2"></div>
+    </div>
 
-        names = shuffle(names);
+    <!-- VS divider -->
+    <div class="split-sep"></div>
+    <div class="vs-center">VS</div>
 
-        const teamA_players = names.slice(0, 2);
-        const teamB_players = names.slice(2, 4);
-        const leftover = names.slice(4);
+    <!-- Right: Team B -->
+    <div class="split-right" id="splitRight">
+      <div class="split-label">Team B</div>
+      <div class="split-av" id="revAvB1"></div>
+      <div class="split-name" id="revNameB1"></div>
+      <div style="height:16px"></div>
+      <div class="split-av" id="revAvB2"></div>
+      <div class="split-name" id="revNameB2"></div>
+    </div>
 
-        // Add players to Team A
-        const teamAUl = document.querySelector("#teamA ul");
-        teamAUl.innerHTML = ""; // Clear previous players
-        teamA_players.forEach((name, index) => {
-          const li = document.createElement("li");
-          li.className = "team-member";
-          li.textContent = name;
-          li.style.animationDelay = `${index * 0.1}s`; // Stagger animation
-          teamAUl.appendChild(li);
-        });
+    <!-- Bench strip -->
+    <div class="reveal-bench" id="revealBench" style="display:none">
+      <span class="reveal-bench-label">Sitting out</span>
+      <div id="revealBenchNames"></div>
+    </div>
+  </div>
 
-        // Add players to Team B
-        const teamBUl = document.querySelector("#teamB ul");
-        teamBUl.innerHTML = ""; // Clear previous players
-        teamB_players.forEach((name, index) => {
-          const li = document.createElement("li");
-          li.className = "team-member";
-          li.textContent = name;
-          li.style.animationDelay = `${index * 0.1}s`; // Stagger animation
-          teamBUl.appendChild(li);
-        });
+</div>
 
-        const extraDiv = document.getElementById("extraPlayers");
-        const benchListDiv = document.getElementById("benchList");
-        if (leftover.length > 0) {
-          benchListDiv.innerHTML = `<p>${leftover.join(", ")}</p>`;
-          extraDiv.classList.remove("hidden");
-        } else {
-          benchListDiv.innerHTML = "";
-          extraDiv.classList.add("hidden");
-        }
-      }
-    </script>
-  </body>
+<!-- ══ MAIN APP ══ -->
+<div class="app">
+  <div class="header">
+    <div class="badge"><div class="badge-dot"></div>Guildford FC</div>
+    <h1>Pick your <span class="accent">squad</span></h1>
+    <p class="header-sub">Select who's playing — we'll sort the teams</p>
+  </div>
+
+  <div class="pitch-line"></div>
+
+  <div class="section-head">
+    <span class="section-label">Players</span>
+    <span class="sel-pill" id="selPill">7 / 7 playing</span>
+  </div>
+
+  <div class="chips-grid" id="chipsGrid"></div>
+
+  <div class="status-row">
+    <div class="status-bar-wrap"><div class="status-bar-fill" id="barFill" style="width:100%"></div></div>
+    <span class="status-text" id="statusText">All in</span>
+  </div>
+
+  <div class="warn" id="warn">Need at least 4 players — 2 per team.</div>
+
+  <div class="btn-row">
+    <button class="btn-generate" id="genBtn" onclick="startDrama()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+      Generate teams
+    </button>
+    <button class="btn-clear" onclick="clearAll()">Clear all</button>
+  </div>
+
+  <!-- Results -->
+  <div class="result-section" id="results">
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-label">Tonight's matchup</span>
+      <div class="divider-line"></div>
+    </div>
+    <div class="vs-row">
+      <div class="tcard a">
+        <div class="tcard-head"><span class="tcard-head-label">Team A</span><span class="tcard-count" id="cntA"></span></div>
+        <div class="tcard-body" id="teamA"></div>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="tcard b">
+        <div class="tcard-head"><span class="tcard-head-label">Team B</span><span class="tcard-count" id="cntB"></span></div>
+        <div class="tcard-body" id="teamB"></div>
+      </div>
+    </div>
+    <div class="bench-res" id="benchCard" style="display:none">
+      <div class="bench-res-head">⏱ Sitting out</div>
+      <div class="bench-res-body" id="benchBody"></div>
+    </div>
+    <button class="btn-reshuffle" onclick="startDrama()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+      Reshuffle teams
+    </button>
+  </div>
+
+  <div class="footer">Guildford Football Pros · PS Edition</div>
+</div>
+
+<script>
+const PLAYERS=[
+  {name:"Ranjan",av:0},{name:"Nissan",av:1},{name:"Salin",av:2},
+  {name:"Bimu",av:3},{name:"Mandu",av:4},{name:"Gaurav",av:5},{name:"Sudrit",av:6}
+];
+const AV_COLORS=["#00C853","#4FC3F7","#FFD740","#FF5252","#CE93D8","#80CBC4","#FFAB40"];
+let sel=new Set(PLAYERS.map(p=>p.name));
+let finalTeams=null;
+
+function initials(n){return n.slice(0,2).toUpperCase();}
+
+function buildGrid(){
+  const g=document.getElementById("chipsGrid");g.innerHTML="";
+  PLAYERS.forEach(p=>{
+    const d=document.createElement("div");d.className="chip on";d.dataset.name=p.name;
+    d.innerHTML=`<div class="chip-tick">✓</div><div class="chip-avatar av${p.av}">${initials(p.name)}</div><span class="chip-name">${p.name}</span>`;
+    d.onclick=()=>toggle(d,p.name);g.appendChild(d);
+  });updateStatus();
+}
+
+function toggle(el,name){
+  if(sel.has(name)){sel.delete(name);el.classList.remove("on");}
+  else{sel.add(name);el.classList.add("on");}
+  updateStatus();document.getElementById("results").classList.remove("show");
+}
+
+function updateStatus(){
+  const n=sel.size,t=PLAYERS.length;
+  document.getElementById("selPill").textContent=`${n} / ${t} playing`;
+  document.getElementById("barFill").style.width=`${(n/t)*100}%`;
+  document.getElementById("statusText").textContent=n===t?"All in":n===0?"None":`${n} selected`;
+}
+
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+
+/* ─────────────── DRAMA ENGINE ─────────────── */
+function showPhase(id){
+  ["phCount","phSlot","phReveal"].forEach(i=>{
+    const el=document.getElementById(i);
+    el.classList.remove("active");
+    el.style.display="";
+  });
+  if(id){
+    const el=document.getElementById(id);
+    el.classList.add("active");
+    el.style.display="flex";
+  }
+}
+
+function startDrama(){
+  if(document.getElementById("warn").classList.contains("show")||sel.size<4){
+    document.getElementById("warn").classList.add("show");return;
+  }
+  document.getElementById("warn").classList.remove("show");
+  const players=shuffle([...sel]);
+  finalTeams={tA:players.slice(0,2),tB:players.slice(2,4),bench:players.slice(4)};
+  document.getElementById("overlay").classList.add("active");
+  document.getElementById("genBtn").disabled=true;
+
+  // Phase 1: countdown
+  showPhase("phCount");
+  const words=[{t:"PICKING…",c:""},{t:"3",c:"amber"},{t:"2",c:"amber"},{t:"1",c:"red"},{t:"GO!",c:"green"}];
+  let wi=0;
+  const bw=document.getElementById("bigWord");
+  function nextWord(){
+    if(wi>=words.length){startSlots();return;}
+    const w=words[wi++];
+    bw.className="big-word "+(w.c||"");
+    bw.textContent=w.t;
+    bw.style.animation="none";void bw.offsetWidth;bw.style.animation="";
+    setTimeout(nextWord,w.t==="PICKING…"?900:620);
+  }
+  nextWord();
+}
+
+function startSlots(){
+  showPhase("phSlot");
+  const allNames=[...sel];
+  const {tA,tB}=finalTeams;
+  const slots=[
+    {card:"sA1",txt:"sA1t",final:tA[0],locked:false},
+    {card:"sB1",txt:"sB1t",final:tB[0],locked:false},
+    {card:"sA2",txt:"sA2t",final:tA[1],locked:false},
+    {card:"sB2",txt:"sB2t",final:tB[1],locked:false},
+  ];
+  function rnd(){return allNames[Math.floor(Math.random()*allNames.length)];}
+  let iv=setInterval(()=>{slots.forEach(s=>{if(!s.locked)document.getElementById(s.txt).textContent=rnd();});},180);
+
+  const lockAt=[1300,2000,2800,3600];
+  slots.forEach((s,i)=>{
+    setTimeout(()=>{
+      s.locked=true;
+      document.getElementById(s.txt).textContent=s.final;
+      document.getElementById(s.card).classList.add("locked");
+      if(i===1){clearInterval(iv);iv=setInterval(()=>{slots.forEach(ss=>{if(!ss.locked)document.getElementById(ss.txt).textContent=rnd();});},90);}
+      if(i===2){clearInterval(iv);iv=setInterval(()=>{slots.forEach(ss=>{if(!ss.locked)document.getElementById(ss.txt).textContent=rnd();});},50);}
+    },lockAt[i]);
+  });
+
+  setTimeout(()=>{clearInterval(iv);buildReveal();},4400);
+}
+
+function buildReveal(){
+  const {tA,tB,bench}=finalTeams;
+
+  // Fill left side (Team A)
+  function fillSide(names,avPre,namePre){
+    names.forEach((name,i)=>{
+      const pi=PLAYERS.findIndex(p=>p.name===name);
+      document.getElementById(avPre+(i+1)).textContent=initials(name);
+      document.getElementById(namePre+(i+1)).textContent=name;
+    });
+  }
+  fillSide(tA,"revAvA","revNameA");
+  fillSide(tB,"revAvB","revNameB");
+
+  // Bench
+  const rb=document.getElementById("revealBench");
+  const rbn=document.getElementById("revealBenchNames");
+  if(bench.length){
+    rbn.innerHTML="";
+    bench.forEach(n=>{
+      const sp=document.createElement("span");sp.className="reveal-bench-pill";sp.textContent=n;rbn.appendChild(sp);
+    });
+    rb.style.display="flex";
+  } else { rb.style.display="none"; }
+
+  showPhase("phReveal");
+
+  // Stagger animations
+  const sl=document.getElementById("splitLeft");
+  const sr=document.getElementById("splitRight");
+  sl.style.animation="none";sr.style.animation="none";
+  void sl.offsetWidth;
+  sl.style.animation="sil .55s .1s cubic-bezier(.22,1,.36,1) both";
+  sr.style.animation="sir .55s .15s cubic-bezier(.22,1,.36,1) both";
+
+  // Confetti
+  spawnConfetti();
+}
+
+function spawnConfetti(){
+  const wrap=document.getElementById("confettiWrap");
+  wrap.innerHTML="";
+  const colors=["#00C853","#4FC3F7","#FFD740","#FF5252","#CE93D8","#fff"];
+  for(let i=0;i<60;i++){
+    const cf=document.createElement("div");cf.className="cf";
+    const c=colors[Math.floor(Math.random()*colors.length)];
+    const x=Math.random()*100;
+    const dur=1.8+Math.random()*2.2;
+    const delay=Math.random()*1.5;
+    const size=6+Math.random()*8;
+    cf.style.cssText=`left:${x}%;background:${c};width:${size}px;height:${size}px;animation-duration:${dur}s;animation-delay:${delay}s;border-radius:${Math.random()>0.5?"50%":"2px"}`;
+    wrap.appendChild(cf);
+  }
+}
+
+function closeOverlay(){
+  document.getElementById("overlay").classList.remove("active");
+  document.getElementById("genBtn").disabled=false;
+  showPhase(null);
+  renderResults();
+}
+
+function renderResults(){
+  const {tA,tB,bench}=finalTeams;
+  function makeRow(name,side,idx){
+    const d=document.createElement("div");d.className="prow pop";d.style.animationDelay=`${idx*0.07}s`;
+    d.innerHTML=`<span class="prow-num">${idx+1}</span><div class="prow-av ${side}">${initials(name)}</div><span class="prow-name">${name}</span>`;
+    return d;
+  }
+  const elA=document.getElementById("teamA"),elB=document.getElementById("teamB");
+  elA.innerHTML="";elB.innerHTML="";
+  tA.forEach((n,i)=>elA.appendChild(makeRow(n,"a",i)));
+  tB.forEach((n,i)=>elB.appendChild(makeRow(n,"b",i)));
+  document.getElementById("cntA").textContent=`${tA.length} players`;
+  document.getElementById("cntB").textContent=`${tB.length} players`;
+  const bc=document.getElementById("benchCard");
+  if(bench.length){
+    const bb=document.getElementById("benchBody");bb.innerHTML="";
+    bench.forEach(n=>{const sp=document.createElement("span");sp.className="bench-pill";sp.textContent=n;bb.appendChild(sp);});
+    bc.style.display="block";
+  }else{bc.style.display="none";}
+  const res=document.getElementById("results");res.classList.remove("show");void res.offsetWidth;res.classList.add("show");
+  res.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function clearAll(){
+  sel.clear();
+  document.querySelectorAll(".chip").forEach(c=>c.classList.remove("on"));
+  updateStatus();
+  document.getElementById("results").classList.remove("show");
+  document.getElementById("warn").classList.remove("show");
+}
+
+buildGrid();
+</script>
+</body>
 </html>
